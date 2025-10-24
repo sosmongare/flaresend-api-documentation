@@ -6,6 +6,7 @@
 Get started by creating an account, setting up a WhatsApp instance, scanning the QR code, and generating your API key.
 
 **Base URL:** `https://api.flaresend.com`
+
 **API Version:** `v1.0.0`
 
 ---
@@ -15,7 +16,7 @@ Get started by creating an account, setting up a WhatsApp instance, scanning the
 ### Step 1: Account Creation
 
 1. Visit [https://www.flaresend.com](https://www.flaresend.com)
-2. Click **“Get Started”** to log in, or select **“Create Account”** if you’re new.
+2. Click **“Get Started”** to log in/sign up
 3. Fill in the required signup information.
 4. Log in to your dashboard.
 
@@ -23,19 +24,20 @@ Get started by creating an account, setting up a WhatsApp instance, scanning the
 
 ### Step 2: Creating an Instance
 
-> ⚠️ **Important:** You must have a connected WhatsApp instance before sending any messages or notifications.
+> ⚠️ **Important:** You must have a connected WhatsApp instance before sending any messages or receive any notifications.
 
 1. Navigate to the **“Your WhatsApp Instances”** section in your dashboard.
 2. Click **“Create New Instance”** at the top-right corner, a new instance will be generated automatically.
-3. Click the **“Reconnect”** button to link your WhatsApp number.
-4. Scan the QR code displayed on the screen following the on-screen instructions.
+3. Click **Show QR** button to scan the generated QR code.
+4. (**If instance(s) is disconnected**) Click the **“Reconnect”** button to link your WhatsApp number.
+5. Scan the QR code displayed on the screen following the on-screen instructions.
 
 ---
 
 ### Step 3: Generate an API Key
 
 1. Go to the **“API Keys”** section in your dashboard.
-2. Copy your generated API key, you’ll use it for all authenticated requests to the Flaresend API.
+2. Copy your generated API key linked to the connected whatsapp number, you’ll use it for all authenticated requests to the Flaresend API.
 
 > 🔒 **Security Tip:** Keep your API key secret. It authenticates your application and grants full access to your account.
 
@@ -54,7 +56,7 @@ Authorization: Bearer YOUR_API_KEY
 Example cURL request:
 
 ```bash
-curl -X GET https://api.flaresend.com/message \
+curl -X GET https://api.flaresend.com/send-message \
      -H "Authorization: Bearer YOUR_API_KEY"
 ```
 
