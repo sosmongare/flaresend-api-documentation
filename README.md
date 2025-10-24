@@ -252,7 +252,7 @@ You can create groups, list existing groups, view details, generate invite links
 ### 1. Create Group
 
 **Endpoint:**
-`POST /groups/create`
+`POST /groups`
 
 Creates a new WhatsApp group with a specified subject and list of participants.
 
@@ -279,7 +279,7 @@ Creates a new WhatsApp group with a specified subject and list of participants.
 #### **Example Request**
 
 ```bash
-curl --location 'https://api.flaresend.com/groups/create' \
+curl --location 'https://api.flaresend.com/groups' \
 --header 'Content-Type: application/json' \
 --header 'Authorization: Bearer YOUR_API_KEY' \
 --data '{ 
