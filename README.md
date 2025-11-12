@@ -540,6 +540,156 @@ curl --location 'https://api.flaresend.com/groups/send-message' \
 }
 ```
 ---
+Here’s the refined documentation for your **6th API endpoint** written in the same style and format as your provided template:
+
+---
+
+### 6. Manage Group Participants
+
+**Endpoint:**
+`POST /groups/:groupId/participants`
+
+Performs participant management actions in a WhatsApp group, including adding, removing, promoting, or demoting users.
+
+---
+
+#### **Headers**
+
+| Header          | Type   | Description                           |
+| --------------- | ------ | ------------------------------------- |
+| `Authorization` | string | Bearer token used for authentication. |
+| `Content-Type`  | string | Must be `application/json`.           |
+
+---
+
+#### **Request Body**
+
+| Field          | Type   | Required | Description                                                                  |
+| -------------- | ------ | -------- | ---------------------------------------------------------------------------- |
+| `action`       | string | ✅ Yes    | The operation to perform. Accepts: `add`, `remove`, `promote`, or `demote`.  |
+| `participants` | array  | ✅ Yes    | List of participant WhatsApp IDs (`@s.whatsapp.net`) to apply the action to. |
+
+---
+
+#### **Example Request**
+
+```bash
+curl --location 'https://api.flaresend.com/groups/120363422712338174@g.us/participants' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer YOUR_API_KEY' \
+--data-raw '{
+    "action": "add",
+    "participants": [
+        "254712345678",
+        "254798765432"
+    ]
+}'
+```
+
+---
+
+#### **Success Responses**
+
+**Add Participants**
+
+```json
+{
+    "success": true,
+    "message": "Participants successfully added",
+    "groupId": "120363422712330174@g.us",
+    "participants": [
+        "254712345678",
+        "254798765432"
+    ]
+}
+```
+
+**Remove Participants**
+
+```json
+{
+    "success": true,
+    "message": "Participants successfully removed",
+    "groupId": "120363422712330174@g.us",
+    "participants": [
+        "254798765432"
+    ]
+}
+```
+
+**Promote Participants**
+
+```json
+{
+    "success": true,
+    "message": "Participants successfully promoted",
+    "groupId": "120363422712330174@g.us",
+    "participants": [
+        "254798765432"
+    ]
+}
+```
+
+**Demote Participants**
+
+```json
+{
+    "success": true,
+    "message": "Participants successfully demoted",
+    "groupId": "120363422712330174@g.us",
+    "participants": [
+        "254798765432"
+    ]
+}
+```
+
+---
+
+#### **Error Responses**
+
+**Participants already in group**
+
+```json
+{
+    "success": false,
+    "message": "Some participants are already in the group.",
+    "invalid": [
+        "254798765432"
+    ]
+}
+```
+
+**Participants not found or invalid**
+
+```json
+{
+    "success": false,
+    "message": "Some participants are not in the group.",
+    "invalid": [
+        "254700000000"
+    ]
+}
+```
+
+**Invalid action**
+
+```json
+{
+    "success": false,
+    "message": "Invalid action. Allowed: add, remove, promote, demote."
+}
+```
+
+---
+
+#### **Notes**
+
+* The endpoint uses the group’s unique identifier (e.g., `120363422712339174@g.us`) as a URL parameter.
+* Only authorized users with valid Bearer tokens can perform group management actions.
+* The API will return clear messages indicating the result of each participant operation.
+
+---
+
 ## Webhooks
 
 Flaresend can notify your server in real time when specific events occur, such as receiving new WhatsApp messages. When a webhook is triggered, Flaresend sends a `POST` request with event data to your registered webhook URL.
@@ -662,7 +812,7 @@ curl --location 'https://api.flaresend.com/check-number' \
 --header 'Authorization: Bearer YOUR_API_KEY' \
 --header 'Content-Type: application/json' \
 --data '{
-    "number": "254735733119"
+    "number": "254798765432"
 }'
 ```
 
@@ -675,7 +825,7 @@ curl --location 'https://api.flaresend.com/check-number' \
 ```json
 {
     "success": true,
-    "number": "254735733119",
+    "number": "254798765432",
     "exists": true
 }
 ```
