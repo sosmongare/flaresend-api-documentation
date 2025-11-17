@@ -239,6 +239,114 @@ curl --location 'https://api.flaresend.com/send-message' \
 }
 ```
 ---
+
+Here is a polished, ready-to-paste **Schedule Messages** section matching the formatting and tone of your existing documentation:
+
+---
+
+## Scheduled Messaging
+
+Flaresend allows you to schedule WhatsApp messages to be delivered at a future date and time. This is useful for reminders, notifications, campaigns, and automated workflows.
+
+---
+
+### Schedule a Message
+
+**Endpoint:** `POST /schedule-message`
+
+### **Headers**
+
+| Header          | Type   | Description                           |
+| --------------- | ------ | ------------------------------------- |
+| `Authorization` | string | Bearer token used for authentication. |
+| `Content-Type`  | string | Must be `application/json`.           |
+
+---
+
+### **Request Body**
+
+| Parameter    | Type   | Required              | Description                                                             |
+| ------------ | ------ | --------------------- | ----------------------------------------------------------------------- |
+| `recipients` | array  | ✅                     | List of phone numbers in international format (e.g., `"2547XXXXXXXX"`). |
+| `type`       | string | ✅                     | Message type — `text`, `image`, `video`, `audio`, `document`, etc.      |
+| `text`       | string | Required if type=text | Message content.                                                        |
+| `sendAt`     | string | ✅                     | Scheduled time in `YYYY-MM-DD HH:mm:ss` format (24-hour).               |
+
+---
+
+### **Example cURL Request**
+
+```bash
+curl --location 'https://api.flaresend.com/schedule-message' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer YOUR_API_KEY' \
+--data '{
+    "recipients": ["254708920430"],
+    "type": "text",
+    "text": "Again!",
+    "sendAt": "2025-11-14 13:48:00"
+}'
+```
+
+---
+
+### **Success Response (200)**
+
+```json
+{
+  "success": true,
+  "message": "Message scheduled successfully",
+  "scheduled_for": "2025-11-14 13:48:00",
+  "task_id": "SCHED-9128371923"
+}
+```
+
+---
+
+## View Scheduled Messages
+
+Retrieve all pending or upcoming scheduled messages.
+
+**Endpoint:** `GET /scheduled-messages`
+
+### **Headers**
+
+| Header          | Type   | Description                           |
+| --------------- | ------ | ------------------------------------- |
+| `Authorization` | string | Bearer token used for authentication. |
+
+---
+
+### **Example cURL Request**
+
+```bash
+curl --location 'https://api.flaresend.com/scheduled-messages' \
+--header 'Authorization: Bearer YOUR_API_KEY'
+```
+
+---
+
+### **Example Response**
+
+```json
+{
+  "success": true,
+  "message": "Scheduled messages fetched successfully",
+  "data": [
+    {
+      "id": "SCHED-9128371923",
+      "recipients": ["254708920430"],
+      "type": "text",
+      "text": "Again!",
+      "sendAt": "2025-11-14 13:48:00",
+      "status": "pending"
+    }
+  ]
+}
+```
+
+---
+
 ## Group Management
 
 Manage WhatsApp groups using the Flaresend API.
