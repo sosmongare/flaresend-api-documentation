@@ -344,6 +344,133 @@ curl --location 'https://api.flaresend.com/scheduled-messages' \
   ]
 }
 ```
+---
+Here’s your refined version with the **Update endpoint switched to PATCH** (for partial updates) and some small formatting improvements so it’s consistent and ready to copy-paste:
+
+---
+
+## Update a Scheduled Message
+
+Update the message content, recipients, or scheduled time before it is sent.
+
+**Endpoint:** `PATCH /scheduled-messages/:id`
+
+---
+
+### **Headers**
+
+| Header          | Type   | Description                           |
+| --------------- | ------ | ------------------------------------- |
+| `Authorization` | string | Bearer token used for authentication. |
+| `Content-Type`  | string | Must be `application/json`.           |
+
+---
+
+### **Request Body**
+
+| Parameter    | Type   | Required              | Description                                                  |
+| ------------ | ------ | --------------------- | ------------------------------------------------------------ |
+| `recipients` | array  | Optional              | Updated list of recipient phone numbers.                     |
+| `type`       | string | Optional              | Message type — `text`, `image`, `video`, etc.                |
+| `text`       | string | Required if type=text | Updated message content.                                     |
+| `url`        | string | Optional              | New file/media URL.                                          |
+| `caption`    | string | Optional              | Updated caption for media.                                   |
+| `sendAt`     | string | Optional              | New schedule time `YYYY-MM-DD HH:mm:ss` (server local time). |
+
+> Only the fields you include will be updated.
+
+---
+
+### **Example cURL Request**
+
+```bash
+curl --location --request PATCH 'https://api.flaresend.com/scheduled-messages/123' \
+--header 'Authorization: Bearer YOUR_API_KEY' \
+--header 'Content-Type: application/json' \
+--data '{
+    "text": "Updated message!",
+    "sendAt": "2025-11-16 14:30:00"
+}'
+```
+
+---
+
+### **Example Success Response**
+
+```json
+{
+  "success": true,
+  "message": "Scheduled message updated successfully",
+  "id": "123",
+  "updated_fields": ["text", "sendAt"]
+}
+```
+
+---
+
+### **Error Response (Message already sent or locked)**
+
+```json
+{
+  "success": false,
+  "message": "This scheduled message can no longer be updated"
+}
+```
+### **Error Response (Incorrect Scheduled Message Id)**
+```json
+{
+    "success": false,
+    "message": "Scheduled message not found"
+}
+```
+---
+
+## Cancel a Scheduled Message
+
+Cancel a scheduled message before the send time.
+Once cancelled, the message will not be delivered.
+
+**Endpoint:** `DELETE /scheduled-messages/:id`
+
+---
+
+### **Headers**
+
+| Header          | Type   | Description                           |
+| --------------- | ------ | ------------------------------------- |
+| `Authorization` | string | Bearer token used for authentication. |
+
+---
+
+### **Example cURL Request**
+
+```bash
+curl --location --request DELETE 'https://api.flaresend.com/scheduled-messages/123' \
+--header 'Authorization: Bearer YOUR_API_KEY'
+```
+
+---
+
+### **Success Response**
+
+```json
+{
+  "success": true,
+  "message": "Scheduled message cancelled successfully",
+  "id": "123"
+}
+```
+
+---
+
+### **Error Response (Invalid or already processed)**
+
+```json
+{
+  "success": false,
+  "message": "Scheduled message not found or cannot be cancelled"
+}
+```
 
 ---
 
