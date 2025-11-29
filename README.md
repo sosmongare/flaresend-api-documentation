@@ -74,6 +74,8 @@ curl -X GET https://api.flaresend.com/send-message \
 This endpoint allows you to send WhatsApp messages through your connected instance.
 You can send **text**, **documents**, **media** (image, audio, or video), or **template** messages depending on your integration setup.
 
+> **Note:** The _/check-number_ API endpoint has been implemented to verify the validity of a phone number and confirm whether it’s registered on WhatsApp before a message is sent. Therefore, there is no need of calling the /check-number API again
+
 **Endpoint:**
 `POST /send-message`
 
@@ -111,6 +113,7 @@ curl --location 'https://api.flaresend.com/send-message' \
 }'
 ```
 
+> **Note:** The _/check-number_ API endpoint has been implemented to verify the validity of a phone number and confirm whether it’s registered on WhatsApp before a message is sent. Therefore, there is no need of calling the /check-number api again
 ---
 
 ### **Example Response**
@@ -125,7 +128,7 @@ curl --location 'https://api.flaresend.com/send-message' \
     "total_recipients": 2,
     "successful_recipients": ["254712345678@s.whatsapp.net", "254798765432@s.whatsapp.net"],
     "failed_recipients": [],
-    "invalid_recipients": []
+    "invalid_recipients": [] //Invalid numbers not registered on whatsapp
 }
 ```
 
