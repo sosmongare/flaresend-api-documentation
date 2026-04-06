@@ -920,14 +920,373 @@ curl --location 'https://api.flaresend.com/groups/120363422712338174@g.us/partic
 
 ---
 
-#### **Notes**
+## Channel Management
 
-* The endpoint uses the group’s unique identifier (e.g., `120363422712339174@g.us`) as a URL parameter.
-* Only authorized users with valid Bearer tokens can perform group management actions.
-* The API will return clear messages indicating the result of each participant operation.
+**Base URL:**
+`https://api.flaresend.com`
+
+Channel Management endpoints allow you to create, manage, and interact with WhatsApp channels (newsletters), including posting messages, updating channel details, and managing subscriptions.
+
+> **Important Notes:**
+>
+> * To send a message to a channel, first obtain the **channel invite code** from your WhatsApp app (mobile handset).
+> * Use the endpoint `/channels/invite/:inviteCode` to retrieve the **channel JID (channel ID)**.
+> * Then use the retrieved `channel JID` in `/channels/:newsletterJid/message` to send messages to the channel.
+> * The **List Channels** feature is currently a work in progress and not available yet.
 
 ---
 
+# 1. Send Message to Channel
+
+This endpoint allows you to send messages to a WhatsApp channel (newsletter).
+You can send **text, image, video, audio, or document** messages.
+
+---
+
+### Endpoint
+
+`POST /channels/:newsletterJid/message`
+
+---
+
+### Headers
+
+| Header          | Type   | Description                             |
+| --------------- | ------ | --------------------------------------- |
+| `Authorization` | string | Bearer token for authentication         |
+| `Content-Type`  | string | application/json or multipart/form-data |
+
+---
+
+### Path Parameters
+
+| Parameter     | Type   | Required | Description                       |
+| ------------- | ------ | -------- | --------------------------------- |
+| newsletterJid | string | ✅        | Channel JID (e.g. 123@newsletter) |
+
+---
+
+### Request Body
+
+| Parameter | Type   | Required           | Description                                                 |
+| --------- | ------ | ------------------ | ----------------------------------------------------------- |
+| type      | string | ✅                  | Message type: `text`, `image`, `video`, `audio`, `document` |
+| text      | string | conditional (text) | Required when type is `text`                                |
+| url       | string | optional           | Media URL (if not uploading file)                           |
+| caption   | string | optional           | Caption for media                                           |
+| mimetype  | string | optional           | File MIME type                                              |
+| fileName  | string | optional           | File name                                                   |
+| file      | file   | optional           | Uploaded file (multipart)                                   |
+
+---
+
+### Example cURL
+
+```bash
+curl --location 'https://api.flaresend.com/channels/120363406469149890@newsletter/message' \
+--header 'Authorization: Bearer YOUR_API_KEY' \
+--header 'Content-Type: application/json' \
+--data '{
+    "type": "text",
+    "text": "Hello everyone 👋"
+}'
+```
+
+---
+
+### Example Response
+
+```json
+{
+  "success": true,
+  "message": "Channel message sent successfully",
+  "sent_at": "2026-04-06T17:36:38.092Z"
+}
+```
+
+---
+
+### Error Responses
+
+**403 - Not Allowed**
+
+```json
+{
+  "success": false,
+  "message": "You are not allowed to post in this channel",
+  "role": "SUBSCRIBER"
+}
+```
+
+**404 - Channel Not Found**
+
+```json
+{
+  "success": false,
+  "message": "Channel not found or inaccessible"
+}
+```
+
+**400 - Missing Data**
+
+```json
+{
+  "success": false,
+  "message": "Text is required"
+}
+```
+
+---
+
+# 2. Get Channel Metadata (by JID)
+
+This endpoint retrieves detailed information about a WhatsApp channel.
+
+---
+
+### Endpoint
+
+`GET /channels/:newsletterJid`
+
+---
+
+### Example cURL
+
+```bash
+curl --location 'https://api.flaresend.com/channels/120363313617097254@newsletter' \
+--header 'Authorization: Bearer YOUR_API_KEY'
+```
+
+---
+
+### Example Response
+
+```json
+{
+  "success": true,
+  "channel": {
+    "id": "120363313617097254@newsletter",
+    "state": {
+      "type": "ACTIVE"
+    },
+    "thread_metadata": {
+      "name": {
+        "text": "Naivas Supermarket"
+      },
+      "description": {
+        "text": "Saves you money!"
+      },
+      "subscribers_count": "364628"
+    },
+    "viewer_metadata": {
+      "role": "SUBSCRIBER"
+    }
+  }
+}
+```
+
+---
+
+# 3. Get Channel Metadata (by Invite Link)
+
+This endpoint retrieves channel information using an invite code.
+
+---
+
+### Endpoint
+
+`GET /channels/invite/:inviteCode`
+
+---
+
+### Example cURL
+
+```bash
+curl --location 'https://api.flaresend.com/channels/invite/0029VanAL05IHphM6gyJ7h02' \
+--header 'Authorization: Bearer YOUR_API_KEY'
+```
+
+---
+
+### Example Response
+
+```json
+{
+  "success": true,
+  "channel": {
+    "id": "120363313617097254@newsletter",
+    "state": {
+      "type": "ACTIVE"
+    }
+  }
+}
+```
+
+---
+
+# 4. Create Channel
+
+This endpoint creates a new WhatsApp channel.
+
+---
+
+### Endpoint
+
+`POST /channels/create`
+
+---
+
+### Request Body
+
+| Parameter   | Type   | Required | Description         |
+| ----------- | ------ | -------- | ------------------- |
+| name        | string | ✅        | Channel name        |
+| description | string | optional | Channel description |
+
+---
+
+### Example cURL
+
+```bash
+curl --location 'https://api.flaresend.com/channels/create' \
+--header 'Authorization: Bearer YOUR_API_KEY' \
+--header 'Content-Type: application/json' \
+--data '{
+    "name": "Engineering 55",
+    "description": "test description"
+}'
+```
+
+---
+
+### Example Response
+
+```json
+{
+  "success": true,
+  "message": "Channel created successfully",
+  "channel": {
+    "id": "120363406469149890@newsletter",
+    "name": "Engineering 55",
+    "invite": "0029Vb8Bvrt8vd1YTuvt1S14",
+    "subscribers": 0
+  }
+}
+```
+
+---
+
+# 5. Update Channel
+
+This endpoint updates channel details such as name, description, or picture.
+
+---
+
+### Endpoint
+
+`PUT /channels/:newsletterJid`
+
+---
+
+### Request Body
+
+| Parameter   | Type   | Required | Description      |
+| ----------- | ------ | -------- | ---------------- |
+| name        | string | optional | New channel name |
+| description | string | optional | New description  |
+| picture     | string | optional | Image URL        |
+
+---
+
+### Example cURL
+
+```bash
+curl --location --request PUT 'https://api.flaresend.com/channels/120363313617097254@newsletter' \
+--header 'Authorization: Bearer YOUR_API_KEY' \
+--header 'Content-Type: application/json' \
+--data '{
+    "name": "Updated Channel Name",
+    "description": "Updated description"
+}'
+```
+
+---
+
+### Example Response
+
+```json
+{
+  "success": true,
+  "message": "Channel updated"
+}
+```
+
+---
+
+# 6. Follow Channel
+
+This endpoint subscribes the authenticated user to a channel.
+
+---
+
+### Endpoint
+
+`POST /channels/:newsletterJid/follow`
+
+---
+
+### Example cURL
+
+```bash
+curl --location 'https://api.flaresend.com/channels/120363313617097254@newsletter/follow' \
+--header 'Authorization: Bearer YOUR_API_KEY'
+```
+
+---
+
+### Example Response
+
+```json
+{
+  "success": true,
+  "message": "Channel followed successfully",
+  "alreadyFollowing": false
+}
+```
+
+---
+
+# 7. Unfollow Channel
+
+This endpoint unsubscribes the user from a channel.
+
+---
+
+### Endpoint
+
+`POST /channels/:newsletterJid/unfollow`
+
+---
+
+### Example cURL
+
+```bash
+curl --location 'https://api.flaresend.com/channels/120363313617097254@newsletter/unfollow' \
+--header 'Authorization: Bearer YOUR_API_KEY'
+```
+
+---
+
+### Example Response
+
+```json
+{
+  "success": true,
+  "message": "Channel unfollowed successfully"
+}
+```
+
+---
 ## Webhooks
 
 Flaresend can notify your server in real time when specific events occur, such as receiving new WhatsApp messages. When a webhook is triggered, Flaresend sends a `POST` request with event data to your registered webhook URL.
