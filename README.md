@@ -1132,7 +1132,7 @@ This endpoint creates a new WhatsApp channel.
 
 ### Endpoint
 
-`POST /channels/create`
+`POST /channels`
 
 ---
 
@@ -1148,7 +1148,7 @@ This endpoint creates a new WhatsApp channel.
 ### Example cURL
 
 ```bash
-curl --location 'https://api.flaresend.com/channels/create' \
+curl --location 'https://api.flaresend.com/channels' \
 --header 'Authorization: Bearer YOUR_API_KEY' \
 --header 'Content-Type: application/json' \
 --data '{
